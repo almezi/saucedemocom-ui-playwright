@@ -50,16 +50,48 @@ public class Hooks {
     @After
     public void afterEach(Scenario scenario) {
         Page page = testContext.getPage();
-        if (page != null) {
-            if (scenario.isFailed()) {
-                byte[] screenshot = page.screenshot(new Page.ScreenshotOptions().setFullPage(true));
-                scenario.attach(screenshot, "image/png", scenario.getName());
-            }
-            page.close();
-        }
         BrowserContext context = testContext.getContext();
-        if (context != null) {
+        try {
+            if (scenario.isFailed()) {
+                attachScreenshot(scenario, page);
+            }
+        } finally {
+            closeQuietly(page);
+            closeQuietly(context);
+        }
+    }
+
+    private void attachScreenshot(Scenario scenario, Page page) {
+        if (page == null || page.isClosed()) {
+            return;
+        }
+        try {
+            byte[] screenshot = page.screenshot(new Page.ScreenshotOptions().setFullPage(true));
+            scenario.attach(screenshot, "image/png", scenario.getName());
+        } catch (RuntimeException exception) {
+            scenario.log("Could not attach screenshot: " + exception.getMessage());
+        }
+    }
+
+    private void closeQuietly(Page page) {
+        if (page == null || page.isClosed()) {
+            return;
+        }
+        try {
+            page.close();
+        } catch (RuntimeException ignored) {
+            // A failed close must not mask the scenario result.
+        }
+    }
+
+    private void closeQuietly(BrowserContext context) {
+        if (context == null) {
+            return;
+        }
+        try {
             context.close();
+        } catch (RuntimeException ignored) {
+            // A failed close must not mask the scenario result.
         }
     }
 

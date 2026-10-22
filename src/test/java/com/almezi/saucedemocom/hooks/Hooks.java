@@ -7,13 +7,24 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.Tracing;
+import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Scenario;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Locale;
+
 public class Hooks {
+
+    private static final double DEFAULT_TIMEOUT_MS = 30_000;
+    private static final Path TRACE_DIRECTORY = Paths.get("target", "playwright-traces");
 
     private static Playwright playwright;
     private static Browser browser;
@@ -27,7 +38,8 @@ public class Hooks {
     @BeforeAll
     public static void beforeAll() {
         if (playwright == null) {
-            playwright = Playwright.create();
+            playwright = TestConfig.createPlaywright();
+            PlaywrightAssertions.setDefaultAssertionTimeout(DEFAULT_TIMEOUT_MS);
             browser = playwright.chromium().launch(
                     new BrowserType.LaunchOptions()
                             .setHeadless(TestConfig.HEADLESS)
@@ -42,7 +54,15 @@ public class Hooks {
             beforeAll();
         }
         BrowserContext context = browser.newContext();
+        context.setDefaultTimeout(DEFAULT_TIMEOUT_MS);
+        context.setDefaultNavigationTimeout(DEFAULT_TIMEOUT_MS);
+        context.tracing().start(new Tracing.StartOptions()
+                .setScreenshots(true)
+                .setSnapshots(true)
+                .setSources(true));
         Page page = context.newPage();
+        page.setDefaultTimeout(DEFAULT_TIMEOUT_MS);
+        page.setDefaultNavigationTimeout(DEFAULT_TIMEOUT_MS);
         testContext.setContext(context);
         testContext.setPage(page);
     }
@@ -50,16 +70,15 @@ public class Hooks {
     @After
     public void afterEach(Scenario scenario) {
         Page page = testContext.getPage();
-        if (page != null) {
-            if (scenario.isFailed()) {
-                byte[] screenshot = page.screenshot(new Page.ScreenshotOptions().setFullPage(true));
-                scenario.attach(screenshot, "image/png", scenario.getName());
-            }
-            page.close();
-        }
         BrowserContext context = testContext.getContext();
-        if (context != null) {
-            context.close();
+        try {
+            if (scenario.isFailed()) {
+                attachScreenshot(scenario, page);
+                attachTrace(scenario, context);
+            }
+        } finally {
+            closeQuietly(page);
+            closeQuietly(context);
         }
     }
 
@@ -72,6 +91,64 @@ public class Hooks {
         if (playwright != null) {
             playwright.close();
             playwright = null;
+        }
+    }
+
+    private void attachScreenshot(Scenario scenario, Page page) {
+        if (page == null || page.isClosed()) {
+            return;
+        }
+        try {
+            byte[] screenshot = page.screenshot(new Page.ScreenshotOptions().setFullPage(true));
+            scenario.attach(screenshot, "image/png", scenario.getName() + " screenshot");
+        } catch (RuntimeException exception) {
+            scenario.log("Could not attach screenshot: " + exception.getMessage());
+        }
+    }
+
+    private void attachTrace(Scenario scenario, BrowserContext context) {
+        if (context == null) {
+            return;
+        }
+        try {
+            Files.createDirectories(TRACE_DIRECTORY);
+            Path tracePath = TRACE_DIRECTORY.resolve(
+                    safeName(scenario.getName()) + "-" + System.currentTimeMillis() + ".zip");
+            context.tracing().stop(new Tracing.StopOptions().setPath(tracePath));
+            scenario.attach(Files.readAllBytes(tracePath), "application/zip", scenario.getName() + " trace");
+            scenario.log("Playwright trace: " + tracePath);
+        } catch (IOException | RuntimeException exception) {
+            scenario.log("Could not attach Playwright trace: " + exception.getMessage());
+        }
+    }
+
+    private String safeName(String name) {
+        String safe = name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "-").replaceAll("(^-|-$)", "");
+        if (safe.isEmpty()) {
+            return "scenario";
+        }
+        return safe.substring(0, Math.min(safe.length(), 60));
+    }
+
+    private void closeQuietly(Page page) {
+        if (page == null || page.isClosed()) {
+            return;
+        }
+        try {
+            page.close();
+        } catch (RuntimeException ignored) {
+            // A failed close must not mask the scenario result.
+        }
+    }
+
+    private void closeQuietly(BrowserContext context) {
+        if (context == null) {
+            return;
+        }
+        try {
+            context.close();
+        } catch (RuntimeException ignored) {
+            // A failed close must not mask the scenario result.
         }
     }
 }

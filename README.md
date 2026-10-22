@@ -1,81 +1,146 @@
-# saucedemocom-ui-playwright
+# SauceDemo UI Automation with Playwright & Cucumber
 
-Behavior-Driven Development (BDD) UI test automation suite for [saucedemo.com](https://www.saucedemo.com) built with Java 21, Playwright, Cucumber BDD, JUnit 5, and Page Object Model (POM).
+An automated UI test suite for [SauceDemo](https://www.saucedemo.com) using **Microsoft Playwright for Java**, **Cucumber (BDD)**, **JUnit 5 Platform Suite**, and HTML reporting.
 
-- groupId: `com.almezi`
-- artifactId: `saucedemocom-ui-playwright`
+---
 
-## Architecture Highlights
+## Tech Stack
 
-- **BDD Gherkin Features**: Human-readable test scenarios located under `src/test/resources/features/`.
-- **Page Object Model (POM)**: Encapsulated UI components and auto-waiting semantic locators under `src/test/java/com/almezi/saucedemocom/pages/`.
-- **Scenario Context Isolation**: Clean `BrowserContext` and `Page` instantiation per scenario with Playwright web-first assertions.
+- **Browser engine:** Microsoft Playwright (Chromium)
+- **BDD framework:** Cucumber Java 7 and Gherkin feature files
+- **Test runner:** JUnit Platform Suite (`@Suite`)
+- **Assertions:** Playwright web-first assertions
+- **Reporting:** Cucumber HTML and JSON reports
 
-## Commands
+---
+
+## Prerequisites
+
+- Java 21 or newer
+- Maven 3.9 or newer
+- Network access to `https://www.saucedemo.com`
+
+The build enforces the Java and Maven versions.
+
+---
+
+## Setup
+
+Install the Chromium build that matches the Playwright version in `pom.xml`:
 
 ```bash
-mvn compile                 # Build project
-mvn test                    # Run all tests (headed by default with 500ms slowMo)
-mvn exec:java -Dexec.mainClass=com.almezi.saucedemocom.App
+mvn -B exec:java -Dexec.args="install chromium"
 ```
 
-### Browser Execution Configuration
-
-By default, tests run in headed mode (`headless=false`) with a `500ms` delay (`slowMo=500`) between actions so you can visually see the browser interactions. You can customize this behavior using system properties:
+On Linux CI, install the OS dependencies too:
 
 ```bash
-# Run in headless mode (e.g. for CI/CD)
-mvn test -Dheadless=true
-
-# Adjust slow motion delay (in milliseconds)
-mvn test -DslowMo=1000
-
-# Fast headed execution without slow motion delay
-mvn test -DslowMo=0
+mvn -B exec:java -Dexec.args="install --with-deps chromium"
 ```
 
-### Running Specific Scenarios or Features
+Playwright browser downloads are skipped during test execution. Run the install command after every Playwright upgrade.
+
+---
+
+## Project Structure
+
+```
+├── pom.xml
+├── README.md
+├── src
+│   └── test
+│       ├── java
+│       │   └── com
+│       │       └── almezi
+│       │           └── saucedemocom
+│       │               ├── config/         # Environment and runtime configuration
+│       │               ├── context/        # Scenario state container
+│       │               ├── hooks/          # Browser lifecycle and failure capture
+│       │               ├── pages/          # Page Object Model classes
+│       │               ├── runners/        # JUnit Platform suite runner
+│       │               └── steps/          # Step definitions
+│       └── resources
+│           ├── cucumber.properties
+│           └── features/
+│               ├── login.feature
+│               └── checkout.feature
+```
+
+---
+
+## Running Tests
+
+### Full suite
 
 ```bash
-# Run specific feature file
-mvn test -Dcucumber.features="src/test/resources/features/login.feature"
+mvn clean test
+```
 
-# Run scenarios with specific tags
+No tag filter is applied by default. All discovered scenarios run.
+
+### Run by tag
+
+```bash
+# Smoke suite
 mvn test -Dcucumber.filter.tags="@smoke"
+
+# Sanity suite
+mvn test -Dcucumber.filter.tags="@sanity"
+
+# Regression suite
+mvn test -Dcucumber.filter.tags="@regression"
 ```
 
-## Playwright Browsers Setup
+Tags are additive: a scenario can carry `@smoke`, `@sanity`, and `@regression` at the same time.
 
-Install the browsers once before running browser tests:
+### Browser configuration
+
+Headless mode is enabled by default. To watch a local run:
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install chromium"
+mvn test -Dheadless=false -DslowMo=250
 ```
 
-## Test Reports & Diagnostics
+`slowMo` is in milliseconds and defaults to `0`.
 
-Every test execution automatically generates comprehensive visual and machine-readable reports to maximize visibility and diagnostic efficiency:
+### Override the target environment
 
-### 1. Cucumber BDD HTML Report
-An interactive, human-readable report detailing scenario outcomes, individual step execution times, and embedded failure screenshots:
-- **Location**: `target/cucumber-reports/cucumber.html`
-- **View Report (macOS)**:
-  ```bash
-  open target/cucumber-reports/cucumber.html
-  ```
-- **View Report (Linux)**:
-  ```bash
-  xdg-open target/cucumber-reports/cucumber.html
-  ```
-- **View Report (Windows)**:
-  ```bash
-  start target/cucumber-reports/cucumber.html
-  ```
+```bash
+mvn test -DbaseUrl="https://www.saucedemo.com"
+```
 
-### 2. Cucumber JSON Report
-Structured machine-readable data designed for CI/CD integration, dashboard ingestion, or custom analytics:
-- **Location**: `target/cucumber-reports/cucumber.json`
+Credentials can be overridden with `-DstandardUser`, `-DstandardPassword`, and `-DlockedOutUser`.
 
-### 3. Maven Surefire Reports
-Standard JUnit XML test summaries for pipeline test parsing:
-- **Location**: `target/surefire-reports/`
+---
+
+## Reports
+
+- Cucumber HTML: `target/cucumber-reports/cucumber.html`
+- Cucumber JSON: `target/cucumber-reports/cucumber.json`
+- Surefire reports: `target/surefire-reports/`
+
+Open the HTML report:
+
+**macOS:**
+
+```bash
+open target/cucumber-reports/cucumber.html
+```
+
+**Linux:**
+
+```bash
+xdg-open target/cucumber-reports/cucumber.html
+```
+
+**Windows:**
+
+```powershell
+start target/cucumber-reports/cucumber.html
+```
+
+---
+
+## Continuous Integration
+
+The GitHub Actions workflow runs the suite on every push and pull request. It installs Chromium, runs the regression suite headlessly, and uploads the Cucumber and Surefire reports plus Playwright traces.

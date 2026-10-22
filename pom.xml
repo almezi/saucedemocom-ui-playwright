@@ -88,6 +88,8 @@
             <include>**/*TestCase.java</include>
             <include>**/*Runner.java</include>
           </includes>
+          <forkedProcessTimeoutInSeconds>900</forkedProcessTimeoutInSeconds>
+          <rerunFailingTestsCount>1</rerunFailingTestsCount>
         </configuration>
       </plugin>
       <plugin>

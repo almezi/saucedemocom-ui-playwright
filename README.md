@@ -51,3 +51,31 @@ Install the browsers once before running browser tests:
 ```bash
 mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install chromium"
 ```
+
+## Test Reports & Diagnostics
+
+Every test execution automatically generates comprehensive visual and machine-readable reports to maximize visibility and diagnostic efficiency:
+
+### 1. Cucumber BDD HTML Report
+An interactive, human-readable report detailing scenario outcomes, individual step execution times, and embedded failure screenshots:
+- **Location**: `target/cucumber-reports/cucumber.html`
+- **View Report (macOS)**:
+  ```bash
+  open target/cucumber-reports/cucumber.html
+  ```
+- **View Report (Linux)**:
+  ```bash
+  xdg-open target/cucumber-reports/cucumber.html
+  ```
+- **View Report (Windows)**:
+  ```bash
+  start target/cucumber-reports/cucumber.html
+  ```
+
+### 2. Cucumber JSON Report
+Structured machine-readable data designed for CI/CD integration, dashboard ingestion, or custom analytics:
+- **Location**: `target/cucumber-reports/cucumber.json`
+
+### 3. Maven Surefire Reports
+Standard JUnit XML test summaries for pipeline test parsing:
+- **Location**: `target/surefire-reports/`

@@ -117,13 +117,13 @@ Feature: End-to-End Checkout
 
 ### Phase 2: Checkout Flow & Complete POM Implementation
 
-- [ ] Task 4: Implement remaining Page Objects (`CartPage`, `CheckoutStepOnePage`, `CheckoutStepTwoPage`, `CheckoutCompletePage`).
-- [ ] Task 5: Implement `checkout.feature` and corresponding step definitions (`InventorySteps`, `CartSteps`, `CheckoutSteps`).
+- [x] Task 4: Implement remaining Page Objects (`CartPage`, `CheckoutStepOnePage`, `CheckoutStepTwoPage`, `CheckoutCompletePage`).
+- [x] Task 5: Implement `checkout.feature` and corresponding step definitions (`InventorySteps`, `CartSteps`, `CheckoutSteps`).
 
 ### Checkpoint: Complete BDD Flow
 
-- [ ] `mvn test` runs all feature files (`login.feature`, `checkout.feature`) with all scenarios passing.
-- [ ] Reports generated with full step visibility and failure screenshot attachment capability.
+- [x] `mvn test` runs all feature files (`login.feature`, `checkout.feature`) with all scenarios passing.
+- [x] Reports generated with full step visibility and failure screenshot attachment capability.
 
 ## Risks and Mitigations
 

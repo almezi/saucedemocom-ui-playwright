@@ -24,6 +24,12 @@ public class LoginSteps {
         testContext.getLoginPage().navigate();
     }
 
+    @Given("the user is logged into SauceDemo as a standard user")
+    public void userIsLoggedIntoSauceDemoAsStandardUser() {
+        testContext.getLoginPage().navigate();
+        testContext.getLoginPage().loginAsStandardUser();
+    }
+
     @When("the user logs in with valid standard credentials")
     public void userLogsInWithValidStandardCredentials() {
         testContext.getLoginPage().loginAsStandardUser();

@@ -66,16 +66,16 @@
 **Description:** Implement `CartPage`, `CheckoutStepOnePage`, `CheckoutStepTwoPage`, and `CheckoutCompletePage` with semantic locators and action methods.
 
 **Acceptance criteria:**
-- [ ] `CartPage` locates items and provides checkout navigation.
-- [ ] `CheckoutStepOnePage` handles customer information input.
-- [ ] `CheckoutStepTwoPage` verifies overview items and summary calculations.
-- [ ] `CheckoutCompletePage` verifies order confirmation message and dispatch headers.
+- [x] `CartPage` locates items and provides checkout navigation.
+- [x] `CheckoutStepOnePage` handles customer information input.
+- [x] `CheckoutStepTwoPage` verifies overview items and summary calculations.
+- [x] `CheckoutCompletePage` verifies order confirmation message and dispatch headers.
 
 **Verification:**
-- [ ] Unit/functional verification of page object locators and methods.
+- [x] Unit/functional verification of page object locators and methods.
 
 **Dependencies:** Task 3  
-**Files likely touched:** `src/test/java/com/almezi/saucedemocom/pages/CartPage.java`, `src/test/java/com/almezi/saucedemocom/pages/CheckoutStepOnePage.java`, `src/test/java/com/almezi/saucedemocom/pages/CheckoutStepTwoPage.java`, `src/test/java/com/almezi/saucedemocom/pages/CheckoutCompletePage.java`  
+**Files touched:** `src/test/java/com/almezi/saucedemocom/pages/CartPage.java`, `src/test/java/com/almezi/saucedemocom/pages/CheckoutStepOnePage.java`, `src/test/java/com/almezi/saucedemocom/pages/CheckoutStepTwoPage.java`, `src/test/java/com/almezi/saucedemocom/pages/CheckoutCompletePage.java`, `src/test/java/com/almezi/saucedemocom/pages/InventoryPage.java`  
 **Estimated scope:** Medium
 
 ---
@@ -84,20 +84,20 @@
 **Description:** Author `checkout.feature` specifying the full Onesie ordering journey in Gherkin and implement step definitions (`InventorySteps`, `CartSteps`, `CheckoutSteps`).
 
 **Acceptance criteria:**
-- [ ] `checkout.feature` covers the end-to-end purchasing workflow for `Sauce Labs Onesie`.
-- [ ] Step definitions delegate directly to Page Objects; no raw selector logic in steps.
-- [ ] Web-first assertions verify item quantity, overview details, and final confirmation.
+- [x] `checkout.feature` covers the end-to-end purchasing workflow for `Sauce Labs Onesie`.
+- [x] Step definitions delegate directly to Page Objects; no raw selector logic in steps.
+- [x] Web-first assertions verify item quantity, overview details, and final confirmation.
 
 **Verification:**
-- [ ] Run `mvn test` and verify full test suite passes.
+- [x] Run `mvn test` and verify full test suite passes.
 
 **Dependencies:** Task 4  
-**Files likely touched:** `src/test/resources/features/checkout.feature`, `src/test/java/com/almezi/saucedemocom/steps/InventorySteps.java`, `src/test/java/com/almezi/saucedemocom/steps/CartSteps.java`, `src/test/java/com/almezi/saucedemocom/steps/CheckoutSteps.java`  
+**Files touched:** `src/test/resources/features/checkout.feature`, `src/test/java/com/almezi/saucedemocom/steps/InventorySteps.java`, `src/test/java/com/almezi/saucedemocom/steps/CartSteps.java`, `src/test/java/com/almezi/saucedemocom/steps/CheckoutSteps.java`  
 **Estimated scope:** Medium
 
 ---
 
 ## Checkpoint: Complete BDD Flow
 
-- [ ] `mvn test` executes all feature files (`login.feature`, `checkout.feature`) with 100% scenario pass rate.
-- [ ] Cucumber HTML report generated in `target/cucumber-reports/`.
+- [x] `mvn test` executes all feature files (`login.feature`, `checkout.feature`) with 100% scenario pass rate.
+- [x] Cucumber HTML report generated in `target/cucumber-reports/`.

@@ -1,13 +1,13 @@
 # SauceDemo UI Automation with Playwright & Cucumber
 
-An automated UI test suite for [SauceDemo](https://www.saucedemo.com) using **Microsoft Playwright for Java**, **Cucumber (BDD)**, **JUnit 5 Platform Suite**, and HTML reporting.
+An automated UI test suite for [SauceDemo](https://www.saucedemo.com) using **Microsoft Playwright for Java**, **Cucumber (BDD)**, **JUnit 6 Platform Suite**, and HTML reporting.
 
 ---
 
 ## Tech Stack
 
 - **Browser engine:** Microsoft Playwright (Chromium)
-- **BDD framework:** Cucumber Java 7 and Gherkin feature files
+- **BDD framework:** Cucumber Java 8 and Gherkin feature files
 - **Test runner:** JUnit Platform Suite (`@Suite`)
 - **Assertions:** Playwright web-first assertions
 - **Reporting:** Cucumber HTML and JSON reports
@@ -60,10 +60,13 @@ Playwright browser downloads are skipped during test execution. Run the install 
 │       │               ├── runners/        # JUnit Platform suite runner
 │       │               └── steps/          # Step definitions
 │       └── resources
-│           ├── cucumber.properties
+│           ├── junit-platform.properties
 │           └── features/
 │               ├── login.feature
-│               └── checkout.feature
+│               ├── inventory.feature
+│               ├── cart.feature
+│               ├── checkout.feature
+│               └── menu.feature
 ```
 
 ---

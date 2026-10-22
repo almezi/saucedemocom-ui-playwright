@@ -1,5 +1,6 @@
 Feature: End-to-End Checkout
 
+  @e2e @regression
   Scenario: Successfully ordering a Sauce Labs Onesie
     Given the user is logged into SauceDemo as a standard user
     When the user adds "Sauce Labs Onesie" to the shopping cart

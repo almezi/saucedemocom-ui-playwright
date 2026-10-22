@@ -5,111 +5,91 @@ sessionId: session-261022-132546-4mof
 # Requirements
 
 ### Overview & Goals
-Extend `tasks/plan.md` to specify both a **File Strategy** and a **Test Strategy** for the SauceDemo Playwright Java test suite. Adding explicit architectural strategies maximizes test maintainability, execution reliability, and diagnostic speed while minimizing flaky failures and maintenance overhead.
+Extend `tasks/plan.md`, `tasks/todo.md`, and `README.md` to adopt a **Cucumber BDD** architecture integrated with Playwright Java, JUnit 5, and Page Object Model (POM). Adding explicit BDD specifications, File Strategy, and Test Strategy maximizes test maintainability, stakeholder visibility, and diagnostic speed while minimizing flaky failures and maintenance overhead.
 
 ### Scope
 - **In Scope:**
-  - Defining the directory and package organization (File Strategy) separating Page Objects, configuration, and test suites.
-  - Defining the test execution lifecycle, locator precedence, synchronization, and assertion guidelines (Test Strategy).
-  - Updating `tasks/plan.md` and synchronizing with `tasks/todo.md`.
+  - Defining Cucumber BDD architecture with `.feature` files, step definitions, and runner.
+  - Defining the directory and package organization (File Strategy) separating Page Objects, step definitions, hooks, context, and feature files.
+  - Defining scenario lifecycle, locator precedence, synchronization, and assertion guidelines (Test Strategy).
+  - Updating `tasks/plan.md`, `tasks/todo.md`, and `README.md`.
 - **Out of Scope:**
-  - Introducing additional external test frameworks or third-party assertion libraries beyond JUnit 5 and Playwright Java.
-  - Modifying application source code outside test and task planning files.
+  - Modifying application source code outside test and documentation files.
 
 ### Functional Requirements
-- `tasks/plan.md` must contain a dedicated **File Strategy** section detailing class placement, package organization, and separation of concerns.
-- `tasks/plan.md` must contain a dedicated **Test Strategy** section detailing browser context lifecycle, locator precedence, auto-waiting, and error diagnosis.
-- The task list and acceptance criteria must stay consistent with the added strategies.
-
+- `tasks/plan.md` must contain a dedicated **Cucumber BDD** plan, **File Strategy**, and **Test Strategy** sections.
+- `tasks/todo.md` must reflect actionable tasks for Cucumber BDD configuration, feature writing, and step definitions.
+- `README.md` must detail Cucumber BDD commands, feature directory structure, and execution instructions.
 
 # Technical Design
 
-### Current Implementation
-- `pom.xml` configures Playwright Java 1.47.0 and JUnit 5.10.3.
-- `src/test/java/com/almezi/saucedemocom/SmokeTest.java` currently contains a single monolithic test creating and destroying Playwright instances inline.
-- `tasks/plan.md` details scenarios and risks but lacks structured file architecture and locator/synchronization guidelines.
-
 ### Key Decisions
-1. **Page Object Model (POM) with Component Encapsulation**: Encapsulate locators and page interactions within dedicated Page classes (`pages/`) to minimize locator duplication and reduce refactoring costs when UI structure evolves.
-2. **BrowserContext Isolation per Test**: Initialize a fresh `BrowserContext` and `Page` for each `@Test` method using JUnit `@BeforeEach` and `@AfterEach` lifecycle hooks, preventing test pollution and ensuring deterministic outcomes.
-3. **Web-First Assertions & Semantic Locators**: Prioritize user-facing locators (`getByRole`, `getByLabel`, `getByText`) and stable `data-test` attributes with Playwright `assertThat()` auto-waiting, strictly avoiding hardcoded sleeps (`Thread.sleep`) or brittle XPath selectors.
+1. **Cucumber BDD with Gherkin Specifications**: Formulate test scenarios as declarative Given-When-Then features under `src/test/resources/features/` to maximize readability and living documentation utility.
+2. **Page Object Model (POM) Integration**: Step definitions interact exclusively through Page Objects in `pages/`, avoiding raw selector logic in steps and ensuring DRY test design.
+3. **Scenario-Level BrowserContext Isolation**: Initialize fresh `BrowserContext` and `Page` instances for each scenario in Cucumber `@Before` / `@After` hooks.
+4. **Web-First Assertions & Semantic Locators**: Prioritize user-facing locators (`getByRole`, `getByPlaceholder`, `getByText`) and stable `data-test` attributes with Playwright `assertThat()` auto-waiting.
 
 ### File Strategy
 ```
-src/test/java/com/almezi/saucedemocom/
-├── base/
-│   └── BaseTest.java             # Browser/Playwright lifecycle hooks and fixture management
-├── config/
-│   └── TestConfig.java           # Centralized environment constants (base URL, demo credentials)
-├── pages/
-│   ├── LoginPage.java            # Login page interactions and locators
-│   ├── InventoryPage.java        # Inventory/product listing and cart badge interactions
-│   ├── CartPage.java             # Shopping cart item verification and navigation
-│   ├── CheckoutStepOnePage.java  # Customer information form handling
-│   ├── CheckoutStepTwoPage.java  # Order overview and item verification
-│   └── CheckoutCompletePage.java # Order completion confirmation and assertions
-└── tests/
-    ├── LoginTest.java            # Atomic login tests (success and validation)
-    └── CheckoutE2ETest.java       # End-to-end checkout workflow (Sauce Labs Onesie)
+src/test/
+├── java/com/almezi/saucedemocom/
+│   ├── config/
+│   │   └── TestConfig.java             # Environment URLs, test credentials, and global flags
+│   ├── context/
+│   │   └── TestContext.java            # Scenario state container and Playwright instance holder
+│   ├── hooks/
+│   │   └── Hooks.java                  # Cucumber @Before and @After lifecycle hooks (context setup/teardown)
+│   ├── pages/
+│   │   ├── LoginPage.java              # Login page actions and locators
+│   │   ├── InventoryPage.java          # Products listing and cart navigation
+│   │   ├── CartPage.java               # Shopping cart verification
+│   │   ├── CheckoutStepOnePage.java    # Customer details form
+│   │   ├── CheckoutStepTwoPage.java    # Order overview and calculations
+│   │   └── CheckoutCompletePage.java   # Order dispatch confirmation
+│   ├── steps/
+│   │   ├── LoginSteps.java             # Step definitions for authentication flows
+│   │   ├── InventorySteps.java         # Step definitions for catalog and cart additions
+│   │   ├── CartSteps.java              # Step definitions for cart verification
+│   │   └── CheckoutSteps.java          # Step definitions for customer info, overview, and completion
+│   └── runners/
+│       └── CucumberTestRunner.java     # Cucumber JUnit Platform Suite runner configuration
+└── resources/
+    ├── cucumber.properties             # Cucumber output and plugin configuration
+    └── features/
+        ├── login.feature               # Gherkin scenarios for login (success, locked-out)
+        └── checkout.feature            # Gherkin scenario for end-to-end Onesie checkout
 ```
 
 ### Test Strategy
 1. **Lifecycle & Isolation**:
-   - `Playwright` and `Browser` instances managed at class or suite level.
-   - Individual `BrowserContext` and `Page` instances created per test (`@BeforeEach`) and closed cleanly (`@AfterEach`) to guarantee zero state leakage.
+   - `Playwright` and `Browser` instances managed at suite level.
+   - Individual `BrowserContext` and `Page` instances created per scenario (`@Before`) and closed cleanly (`@After`).
 2. **Locator Hierarchy**:
    - Level 1: Role and accessible names (`page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Login"))`).
    - Level 2: Label / Placeholder / Text (`page.getByPlaceholder("Username")`).
    - Level 3: Stable test identifiers (`page.locator("[data-test='shopping-cart-badge']")`).
    - Disallowed: Dynamic CSS class names, absolute XPath paths, index-dependent position locators.
 3. **Assertions & Synchronization**:
-   - Utilize Playwright's `com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat`.
-   - Leverage built-in retries and auto-waiting; reject explicit thread pauses.
+   - Playwright web-first assertions (`assertThat`).
+   - Built-in retries and auto-waiting; reject explicit thread pauses.
 4. **Diagnostics & Failure Capture**:
-   - Capture page screenshots or Playwright traces on test failure to accelerate root-cause triage.
+   - Capture screenshots and attach to Cucumber scenario report on failure.
 
 ### Architecture Diagram
 ```mermaid
 graph TD
-    BaseTest["BaseTest (Lifecycle & Fixtures)"] --> LoginTest["LoginTest"]
-    BaseTest --> CheckoutTest["CheckoutE2ETest"]
-    LoginTest --> LoginPage["LoginPage"]
-    LoginTest --> InventoryPage["InventoryPage"]
-    CheckoutTest --> LoginPage
-    CheckoutTest --> InventoryPage
-    CheckoutTest --> CartPage["CartPage"]
-    CheckoutTest --> CheckoutStepOne["CheckoutStepOnePage"]
-    CheckoutTest --> CheckoutStepTwo["CheckoutStepTwoPage"]
-    CheckoutTest --> CheckoutComplete["CheckoutCompletePage"]
-    LoginPage -.-> TestConfig["TestConfig (Constants & Credentials)"]
+    CucumberRunner["CucumberTestRunner"] --> Features["Gherkin Features (.feature)"]
+    Features --> Hooks["Cucumber Hooks (@Before/@After)"]
+    Features --> Steps["Step Definitions (steps/)"]
+    Steps --> Pages["Page Objects (pages/)"]
+    Hooks --> Context["BrowserContext / Page Isolation"]
+    Pages -.-> TestConfig["TestConfig (Constants & Credentials)"]
 ```
-
-
-# Testing
-
-### Validation Approach
-Verify that the updated `tasks/plan.md` and associated task descriptions provide complete, actionable instructions that allow any engineer or agent to implement the test suite deterministically.
-
-### Key Scenarios
-1. **Plan Completeness**:
-   - Verify `tasks/plan.md` includes explicit sections for File Strategy, Test Strategy, Lifecycle, Locator Hierarchy, and Synchronization.
-2. **Consistency**:
-   - Ensure the task list in `tasks/plan.md` and `tasks/todo.md` directly maps to the proposed Page Object file layout and test architecture.
-3. **Executable Compliance**:
-   - Verify that all guidelines align with standard Playwright Java and JUnit 5 best practices, runnable via `mvn test`.
-
 
 # Delivery Steps
 
-###   Step 1: Define File Strategy and Test Strategy in Plan
-`tasks/plan.md` is updated with comprehensive File Strategy and Test Strategy sections to govern the test automation architecture.
+### ✓ Step 1: Define File Strategy and Test Strategy in Plan
+`tasks/plan.md` is updated with comprehensive Cucumber BDD architecture, File Strategy, and Test Strategy sections to govern the test automation design.
 
-- Define the File Strategy: Page Object Model (POM) directory layout (`pages/`, `config/`, test suites), naming conventions, and separation of UI locators from test logic.
-- Define the Test Strategy: Context isolation per test, Playwright web-first assertions, auto-waiting policies, locator priority rules, and diagnostic artifact handling (screenshots/traces on failure).
-- Ensure alignment between existing task breakdown and the newly added architectural strategies.
-
-###   Step 2: Align Task Breakdown with Test and File Strategies
-`tasks/todo.md` is updated to reflect task items corresponding to the structural foundation and strategy implementation.
-
-- Add tasks for establishing base test fixtures and Page Object structure in `src/test/java/com/almezi/saucedemocom/`.
-- Ensure each test task adheres to locator hierarchy and web-first assertion standards defined in the test strategy.
+### ✓ Step 2: Align Task Breakdown with Test and File Strategies
+`tasks/todo.md` and `README.md` are updated to reflect Cucumber BDD task items, feature organization, and execution commands.

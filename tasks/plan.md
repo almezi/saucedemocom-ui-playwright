@@ -1,74 +1,141 @@
-# Implementation Plan: SauceDemo Login and Checkout E2E
+# Implementation Plan: SauceDemo Login and Checkout E2E (Cucumber BDD)
 
 ## Overview
 
-Add automated browser coverage for a successful SauceDemo login and a complete checkout of one `Sauce Labs Onesie`. The test will use the repository's existing Java 21, Maven, Playwright Java, and JUnit 5 stack, and verify observable outcomes at each important transition rather than only checking that the page loads.
+Provide automated browser test coverage for SauceDemo authentication and end-to-end checkout (`Sauce Labs Onesie`) using a **Cucumber BDD** framework integrated with **Playwright Java**, **JUnit 5**, and the **Page Object Model (POM)** pattern. Test scenarios are specified in human-readable Gherkin feature files backed by maintainable, auto-waiting step definitions.
 
 ## Existing Project Context
 
-- `pom.xml` already includes Playwright Java 1.47.0, JUnit Jupiter 5.10.3, and Maven Surefire.
-- `SmokeTest` currently launches Chromium and checks only that the homepage has a title.
-- The live login page exposes accessible `Username`, `Password`, and `Login` controls and lists the public `standard_user` account and shared demo password.
-- The project README documents `mvn test` and the Playwright Chromium installation command.
+- `pom.xml` configures Playwright Java 1.47.0 and JUnit 5.10.3 (to be augmented with `cucumber-java` and `cucumber-junit-platform-engine`).
+- `src/test/java/com/almezi/saucedemocom/` contains base fixtures, configuration, and initial page objects (`LoginPage`, `InventoryPage`).
+- Test execution is triggered via standard Maven lifecycle (`mvn test`).
 
-## Architecture Decisions
+## Architecture & Design Decisions
 
-- Keep the tests in JUnit 5 and use the existing Playwright dependency; do not add a new test framework.
-- Use the public `standard_user` demo account. Keep credentials centralized in test setup or environment/configuration rather than repeating literals across test cases.
-- Prefer semantic Playwright locators (role, label, and product name) or SauceDemo's stable `data-test` attributes. Avoid brittle positional selectors and fixed sleeps; rely on Playwright's auto-waiting and explicit assertions.
-- Ensure each test gets an isolated browser context and closes its page, context, browser, and Playwright resources even when an assertion fails.
-- Keep a focused login test separate from the full checkout scenario so login failures are easy to diagnose.
+1. **Cucumber BDD with Gherkin Specifications**: Specify test flows as declarative Given-When-Then scenarios in `.feature` files under `src/test/resources/features/` to maximize readability and living documentation utility.
+2. **Page Object Model (POM) Integration**: Step definition classes delegate all web element locators and UI actions directly to dedicated Page classes in `pages/`, preventing locator duplication and lowering maintenance overhead.
+3. **Scenario-Level BrowserContext Isolation**: Cucumber `@Before` and `@After` hooks manage fresh `BrowserContext` and `Page` instances for each scenario to prevent state leakage and guarantee independent test execution.
+4. **Semantic Locators & Web-First Assertions**: Prioritize accessible roles, labels, placeholders, and stable `data-test` attributes alongside Playwright's `assertThat()` auto-waiting assertions, eliminating brittle sleeps or hardcoded waits.
+5. **Centralized Configuration & State Sharing**: Store environment constants and credentials in `TestConfig.java` and use a shared `TestContext` or Cucumber dependency injection for clean state passing between steps.
 
-## Test Scenarios and Acceptance Criteria
+## File Strategy
 
-### Login
+```
+src/test/
+├── java/com/almezi/saucedemocom/
+│   ├── config/
+│   │   └── TestConfig.java             # Environment URLs, test credentials, and global flags
+│   ├── context/
+│   │   └── TestContext.java            # Scenario state container and Playwright instance holder
+│   ├── hooks/
+│   │   └── Hooks.java                  # Cucumber @Before and @After lifecycle hooks (context setup/teardown)
+│   ├── pages/
+│   │   ├── LoginPage.java              # Login page actions and locators
+│   │   ├── InventoryPage.java          # Products listing and cart navigation
+│   │   ├── CartPage.java               # Shopping cart verification
+│   │   ├── CheckoutStepOnePage.java    # Customer details form
+│   │   ├── CheckoutStepTwoPage.java    # Order overview and calculations
+│   │   └── CheckoutCompletePage.java   # Order dispatch confirmation
+│   ├── steps/
+│   │   ├── LoginSteps.java             # Step definitions for authentication flows
+│   │   ├── InventorySteps.java         # Step definitions for catalog and cart additions
+│   │   ├── CartSteps.java              # Step definitions for cart verification
+│   │   └── CheckoutSteps.java          # Step definitions for customer info, overview, and completion
+│   └── runners/
+│       └── CucumberTestRunner.java     # Cucumber JUnit Platform Suite runner configuration
+└── resources/
+    ├── cucumber.properties             # Cucumber output and plugin configuration
+    └── features/
+        ├── login.feature               # Gherkin scenarios for login (success, locked-out)
+        └── checkout.feature            # Gherkin scenario for end-to-end Onesie checkout
+```
 
-1. Open `https://www.saucedemo.com/`.
-2. Enter the valid demo account credentials and submit the login form.
-3. Verify navigation to the inventory page, the `Products` heading, and absence of a visible login error.
+## Test Strategy
 
-### E2E Checkout: Sauce Labs Onesie
+1. **Execution Lifecycle**:
+   - Class/Suite level: Initialize `Playwright` and `Browser` singletons.
+   - Scenario level: Fresh `BrowserContext` and `Page` created in `@Before` hook and cleanly closed in `@After` hook.
+   - Failure diagnostics: Attach screenshots and Playwright trace files to Cucumber scenario reports on step failure.
+2. **Locator Hierarchy**:
+   - Level 1: Semantic roles and accessible names (`page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Login"))`).
+   - Level 2: User-visible text and placeholders (`page.getByPlaceholder("Username")`).
+   - Level 3: Stable test identifiers (`page.locator("[data-test='shopping-cart-badge']")`).
+   - Disallowed: Brittle absolute XPath selectors, class-attribute chains, or index-based navigation.
+3. **Synchronization & Assertions**:
+   - Use Playwright web-first assertions (`com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat`).
+   - Rely strictly on built-in auto-waiting and retry mechanisms; avoid `Thread.sleep()`.
 
-1. Log in as `standard_user`.
-2. From inventory, add exactly one `Sauce Labs Onesie`.
-3. Verify the cart badge shows one item, open the cart, and verify the cart contains the Onesie with quantity one.
-4. Select checkout and enter valid first name, last name, and postal code test data.
-5. Continue to the order overview and verify it contains the Onesie with quantity one and displays the order summary.
-6. Finish checkout and verify the completed-order heading/message is visible (including `Thank you for your order!`) and the completion page is reached.
+## BDD Feature Scenarios
+
+### Feature: User Authentication (`login.feature`)
+
+```gherkin
+Feature: User Authentication
+
+  Scenario: Successful login with standard credentials
+    Given the user is on the SauceDemo login page
+    When the user logs in with valid standard credentials
+    Then the user should be directed to the inventory page
+    And the products catalog header should be visible
+
+  Scenario: Login failure with locked out user
+    Given the user is on the SauceDemo login page
+    When the user logs in with username "locked_out_user" and password "secret_sauce"
+    Then an error message stating "Sorry, this user has been locked out." should be displayed
+```
+
+### Feature: End-to-End Checkout (`checkout.feature`)
+
+```gherkin
+Feature: End-to-End Checkout
+
+  Scenario: Successfully ordering a Sauce Labs Onesie
+    Given the user is logged into SauceDemo as a standard user
+    When the user adds "Sauce Labs Onesie" to the shopping cart
+    And navigates to the shopping cart
+    Then the cart should contain 1 item of "Sauce Labs Onesie"
+    When the user proceeds to checkout
+    And fills in customer information with first name "John", last name "Doe", and postal code "12345"
+    And continues to the checkout overview
+    Then the order summary should show "Sauce Labs Onesie" with quantity 1
+    When the user finishes the checkout
+    Then the order confirmation message "Thank you for your order!" should be displayed
+```
 
 ## Task List
 
-### Phase 1: Test Foundation
+### Phase 1: Test Foundation & BDD Setup
 
-- [x] Task 1: Establish isolated Playwright/JUnit test lifecycle and shared login setup.
-- [x] Task 2: Add a focused successful-login test.
+- [x] Task 1: Establish Playwright test lifecycle, configuration, and initial Page Objects (`LoginPage`, `InventoryPage`).
+- [ ] Task 2: Configure Cucumber BDD dependencies (`cucumber-java`, `cucumber-junit-platform-engine`), `cucumber.properties`, and `CucumberTestRunner`.
+- [ ] Task 3: Create Cucumber lifecycle `Hooks` and map `login.feature` to `LoginSteps` using existing Page Objects.
 
-### Checkpoint: Login
+### Checkpoint: Login BDD
 
-- [x] `mvn test` passes with the login test and existing browser smoke coverage.
-- [x] The test proves successful authentication by checking the inventory page, not just a non-empty page title.
+- [ ] `mvn test` executes Cucumber runner and passes all scenarios in `login.feature`.
+- [ ] Browser contexts isolate cleanly per scenario with zero resource leaks.
 
-### Phase 2: Checkout Flow
+### Phase 2: Checkout Flow & Complete POM Implementation
 
-- [ ] Task 3: Add the Onesie cart and checkout completion E2E test.
+- [ ] Task 4: Implement remaining Page Objects (`CartPage`, `CheckoutStepOnePage`, `CheckoutStepTwoPage`, `CheckoutCompletePage`).
+- [ ] Task 5: Implement `checkout.feature` and corresponding step definitions (`InventorySteps`, `CartSteps`, `CheckoutSteps`).
 
-### Checkpoint: Complete Flow
+### Checkpoint: Complete BDD Flow
 
-- [ ] `mvn test` passes with the entire checkout path.
-- [ ] Assertions confirm the selected product and quantity in the cart and overview, and the final order-complete state.
-- [ ] No fixed sleeps or brittle index-based locators are used.
+- [ ] `mvn test` runs all feature files (`login.feature`, `checkout.feature`) with all scenarios passing.
+- [ ] Reports generated with full step visibility and failure screenshot attachment capability.
 
 ## Risks and Mitigations
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| SauceDemo is an external service and may be unavailable or slow | Intermittent test failures | Use Playwright auto-waiting, avoid fixed timing assumptions, and report environmental/network failures distinctly from assertion failures. |
-| Public demo account behavior or page content changes | Test may fail after site updates | Use the documented `standard_user` account and assert stable user-visible outcomes; keep selectors semantic or based on stable `data-test` attributes. |
-| Browser resources leak when a test fails | Later tests may hang or fail | Use JUnit lifecycle methods and try-with-resources where appropriate so all Playwright resources close reliably. |
-| Exact pricing or tax values change | False failures unrelated to checkout completion | Assert product identity, quantity, and presence/consistency of summary totals; avoid hard-coding tax or total unless the requirement explicitly needs exact-price verification. |
+| Step definition bloat / duplication | Hard-to-maintain glue code | Delegate all UI interactions to Page Objects; keep step definition methods thin and declarative. |
+| External site latency / volatility | Flaky scenario steps | Rely on Playwright auto-waiting assertions (`assertThat`) and configure appropriate action timeouts. |
+| Scenario state pollution | Order-dependent test failures | Recreate `BrowserContext` and `Page` per scenario via `@Before`/`@After` hooks. |
+| Inconsistent Gherkin wording | Unmapped steps or duplicate glue logic | Define clear domain vocabulary and reusable step patterns for standard navigation and assertion steps. |
 
 ## Verification
 
-- Install Chromium if it is not already available, using the command documented in `README.md`.
-- Run `mvn test`.
-- Confirm the login test reaches the inventory page and the E2E test reaches the order-complete page with the Onesie as the checked-out item.
+- Install Chromium: `mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install chromium"`
+- Execute entire BDD suite: `mvn test`
+- Execute specific feature: `mvn test -Dcucumber.features="src/test/resources/features/checkout.feature"`

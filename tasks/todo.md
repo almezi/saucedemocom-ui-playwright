@@ -1,67 +1,103 @@
-# Task List: SauceDemo Login and Checkout E2E
+# Task List: SauceDemo Login and Checkout E2E (Cucumber BDD)
 
-## Phase 1: Test Foundation
+## Phase 1: Test Foundation & BDD Setup
 
-### Task 1: Establish isolated Playwright/JUnit test lifecycle
-
-**Description:** Refactor or extend the existing `SmokeTest` test setup so browser tests use isolated contexts and reliably close Playwright resources. Provide a shared, non-duplicated way to open SauceDemo and authenticate as the public `standard_user` demo account.
+### Task 1: Establish isolated Playwright test lifecycle and Page Objects
+**Description:** Set up centralized configuration (`TestConfig`), base Playwright lifecycle fixtures, and initial Page Objects (`LoginPage`, `InventoryPage`) using accessible and `data-test` locators.
 
 **Acceptance criteria:**
-- [x] Tests create an isolated browser context and close context, browser, and Playwright resources after each run, including assertion failures.
-- [x] The demo username and password are not duplicated across test methods.
-- [x] Existing browser-launch coverage remains meaningful or is replaced by stronger user-flow assertions.
+- [x] Configuration centralized in `TestConfig` for credentials and base URL.
+- [x] Page Objects encapsulate locators and page interactions with Playwright auto-waiting assertions.
+- [x] Standalone smoke test passes verifying homepage connectivity.
 
 **Verification:**
 - [x] Run `mvn test`.
-- [x] Confirm the test starts Chromium headlessly and cleans up without leaving browser processes owned by the test.
 
 **Dependencies:** None  
-**Files likely touched:** `src/test/java/com/almezi/saucedemocom/SmokeTest.java`  
+**Files touched:** `src/test/java/com/almezi/saucedemocom/config/TestConfig.java`, `src/test/java/com/almezi/saucedemocom/pages/LoginPage.java`, `src/test/java/com/almezi/saucedemocom/pages/InventoryPage.java`  
 **Estimated scope:** Small
 
-### Task 2: Add a focused successful-login test
+---
 
-**Description:** Exercise the login form with valid demo credentials and verify the application reaches the authenticated inventory screen.
+### Task 2: Configure Cucumber BDD Dependencies and Test Runner
+**Description:** Add Cucumber dependencies (`cucumber-java`, `cucumber-junit-platform-engine`) to `pom.xml`, configure `cucumber.properties`, and implement `CucumberTestRunner`.
 
 **Acceptance criteria:**
-- [x] The test enters credentials using accessible labels or stable selectors and submits the login form.
-- [x] The test verifies the inventory URL/page and visible `Products` heading.
-- [x] A failed login remains a test failure rather than being hidden by a fallback.
+- [ ] Maven builds successfully with Cucumber JUnit Platform Engine.
+- [ ] `CucumberTestRunner` configured with standard plugins (pretty, html report).
+- [ ] Cucumber discovers features under `src/test/resources/features/` and glue code under `com.almezi.saucedemocom`.
 
 **Verification:**
-- [x] Run the focused test with `mvn -Dtest=SmokeTest test` (or the renamed test class selector).
-- [x] Run `mvn test` to check the complete suite.
+- [ ] Run `mvn test` and verify Cucumber runner triggers feature scanning.
 
 **Dependencies:** Task 1  
-**Files likely touched:** `src/test/java/com/almezi/saucedemocom/SmokeTest.java`  
+**Files likely touched:** `pom.xml`, `src/test/resources/cucumber.properties`, `src/test/java/com/almezi/saucedemocom/runners/CucumberTestRunner.java`  
 **Estimated scope:** Small
 
-## Checkpoint: Login
+---
 
-- [x] `mvn test` passes.
-- [x] Login success is asserted by authenticated inventory content, not only by successful browser launch.
-
-## Phase 2: Checkout Flow
-
-### Task 3: Add the Onesie checkout E2E test
-
-**Description:** Add the `Sauce Labs Onesie` to the cart, proceed through customer information and order overview, finish checkout, and assert the final order-complete state.
+### Task 3: Implement Cucumber Lifecycle Hooks and Login Step Definitions
+**Description:** Create `Hooks` for scenario-level Playwright setup/teardown and screenshot on failure, write `login.feature`, and implement `LoginSteps` using `LoginPage` and `InventoryPage`.
 
 **Acceptance criteria:**
-- [ ] The cart badge and cart page show exactly one `Sauce Labs Onesie`, quantity one.
-- [ ] Checkout information is submitted and the overview shows the expected item and quantity.
-- [ ] Completing checkout displays the order confirmation (including `Thank you for your order!`).
-- [ ] Locators are semantic or use stable `data-test` attributes; no fixed sleeps or positional selectors are introduced.
+- [ ] Cucumber `@Before` / `@After` hooks provide fresh `BrowserContext` and `Page` per scenario.
+- [ ] `login.feature` covers successful login and locked-out user scenarios.
+- [ ] `LoginSteps` executes steps delegating to Page Objects with web-first assertions.
 
 **Verification:**
-- [ ] Run the checkout test with `mvn -Dtest=SmokeTest test` (or the renamed test class selector).
-- [ ] Run `mvn test` and confirm all tests pass.
+- [ ] Run `mvn test` and verify both login scenarios pass.
 
-**Dependencies:** Task 1  
-**Files likely touched:** `src/test/java/com/almezi/saucedemocom/SmokeTest.java`  
+**Dependencies:** Task 2  
+**Files likely touched:** `src/test/resources/features/login.feature`, `src/test/java/com/almezi/saucedemocom/hooks/Hooks.java`, `src/test/java/com/almezi/saucedemocom/steps/LoginSteps.java`  
 **Estimated scope:** Medium
 
-## Checkpoint: Complete Flow
+---
 
-- [ ] Login and checkout tests pass with `mvn test`.
-- [ ] The final assertion proves checkout reached the completed-order page for the expected product.
+## Checkpoint: Login BDD
+
+- [ ] `mvn test` passes with all scenarios in `login.feature`.
+- [ ] Browser contexts isolate cleanly per scenario with zero resource leaks.
+
+---
+
+## Phase 2: Checkout Flow & Complete POM Implementation
+
+### Task 4: Implement Remaining Page Objects for Checkout Flow
+**Description:** Implement `CartPage`, `CheckoutStepOnePage`, `CheckoutStepTwoPage`, and `CheckoutCompletePage` with semantic locators and action methods.
+
+**Acceptance criteria:**
+- [ ] `CartPage` locates items and provides checkout navigation.
+- [ ] `CheckoutStepOnePage` handles customer information input.
+- [ ] `CheckoutStepTwoPage` verifies overview items and summary calculations.
+- [ ] `CheckoutCompletePage` verifies order confirmation message and dispatch headers.
+
+**Verification:**
+- [ ] Unit/functional verification of page object locators and methods.
+
+**Dependencies:** Task 3  
+**Files likely touched:** `src/test/java/com/almezi/saucedemocom/pages/CartPage.java`, `src/test/java/com/almezi/saucedemocom/pages/CheckoutStepOnePage.java`, `src/test/java/com/almezi/saucedemocom/pages/CheckoutStepTwoPage.java`, `src/test/java/com/almezi/saucedemocom/pages/CheckoutCompletePage.java`  
+**Estimated scope:** Medium
+
+---
+
+### Task 5: Implement End-to-End Checkout Feature and Step Definitions
+**Description:** Author `checkout.feature` specifying the full Onesie ordering journey in Gherkin and implement step definitions (`InventorySteps`, `CartSteps`, `CheckoutSteps`).
+
+**Acceptance criteria:**
+- [ ] `checkout.feature` covers the end-to-end purchasing workflow for `Sauce Labs Onesie`.
+- [ ] Step definitions delegate directly to Page Objects; no raw selector logic in steps.
+- [ ] Web-first assertions verify item quantity, overview details, and final confirmation.
+
+**Verification:**
+- [ ] Run `mvn test` and verify full test suite passes.
+
+**Dependencies:** Task 4  
+**Files likely touched:** `src/test/resources/features/checkout.feature`, `src/test/java/com/almezi/saucedemocom/steps/InventorySteps.java`, `src/test/java/com/almezi/saucedemocom/steps/CartSteps.java`, `src/test/java/com/almezi/saucedemocom/steps/CheckoutSteps.java`  
+**Estimated scope:** Medium
+
+---
+
+## Checkpoint: Complete BDD Flow
+
+- [ ] `mvn test` executes all feature files (`login.feature`, `checkout.feature`) with 100% scenario pass rate.
+- [ ] Cucumber HTML report generated in `target/cucumber-reports/`.

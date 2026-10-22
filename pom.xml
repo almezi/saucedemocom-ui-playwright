@@ -18,6 +18,7 @@
     <cucumber.version>7.18.0</cucumber.version>
     <junit.jupiter.version>5.10.3</junit.jupiter.version>
     <junit.platform.version>1.10.3</junit.platform.version>
+    <cucumber.filter.tags></cucumber.filter.tags>
   </properties>
 
   <dependencies>
@@ -56,6 +57,12 @@
       <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-junit</artifactId>
+      <version>${cucumber.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -71,6 +78,9 @@
             <include>**/*TestCase.java</include>
             <include>**/*Runner.java</include>
           </includes>
+          <systemPropertyVariables>
+            <cucumber.filter.tags>${cucumber.filter.tags}</cucumber.filter.tags>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

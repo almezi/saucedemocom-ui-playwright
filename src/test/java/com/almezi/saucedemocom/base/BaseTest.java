@@ -1,5 +1,6 @@
 package com.almezi.saucedemocom.base;
 
+import com.almezi.saucedemocom.config.TestConfig;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
@@ -21,8 +22,11 @@ public abstract class BaseTest {
     @BeforeAll
     public static void setupBrowser() {
         playwright = Playwright.create();
-        boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(isHeadless));
+        browser = playwright.chromium().launch(
+                new BrowserType.LaunchOptions()
+                        .setHeadless(TestConfig.HEADLESS)
+                        .setSlowMo(TestConfig.SLOW_MO)
+        );
     }
 
     @BeforeEach

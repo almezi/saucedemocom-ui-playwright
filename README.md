@@ -15,8 +15,23 @@ Behavior-Driven Development (BDD) UI test automation suite for [saucedemo.com](h
 
 ```bash
 mvn compile                 # Build project
-mvn test                    # Run all tests (Cucumber BDD scenarios & JUnit tests)
+mvn test                    # Run all tests (headed by default with 500ms slowMo)
 mvn exec:java -Dexec.mainClass=com.almezi.saucedemocom.App
+```
+
+### Browser Execution Configuration
+
+By default, tests run in headed mode (`headless=false`) with a `500ms` delay (`slowMo=500`) between actions so you can visually see the browser interactions. You can customize this behavior using system properties:
+
+```bash
+# Run in headless mode (e.g. for CI/CD)
+mvn test -Dheadless=true
+
+# Adjust slow motion delay (in milliseconds)
+mvn test -DslowMo=1000
+
+# Fast headed execution without slow motion delay
+mvn test -DslowMo=0
 ```
 
 ### Running Specific Scenarios or Features

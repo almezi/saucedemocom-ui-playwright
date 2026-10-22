@@ -1,5 +1,6 @@
 package com.almezi.saucedemocom.hooks;
 
+import com.almezi.saucedemocom.config.TestConfig;
 import com.almezi.saucedemocom.context.TestContext;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -27,8 +28,11 @@ public class Hooks {
     public static void beforeAll() {
         if (playwright == null) {
             playwright = Playwright.create();
-            boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
-            browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(isHeadless));
+            browser = playwright.chromium().launch(
+                    new BrowserType.LaunchOptions()
+                            .setHeadless(TestConfig.HEADLESS)
+                            .setSlowMo(TestConfig.SLOW_MO)
+            );
         }
     }
 

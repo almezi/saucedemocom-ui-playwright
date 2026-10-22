@@ -7,13 +7,13 @@
 **Description:** Refactor or extend the existing `SmokeTest` test setup so browser tests use isolated contexts and reliably close Playwright resources. Provide a shared, non-duplicated way to open SauceDemo and authenticate as the public `standard_user` demo account.
 
 **Acceptance criteria:**
-- [ ] Tests create an isolated browser context and close context, browser, and Playwright resources after each run, including assertion failures.
-- [ ] The demo username and password are not duplicated across test methods.
-- [ ] Existing browser-launch coverage remains meaningful or is replaced by stronger user-flow assertions.
+- [x] Tests create an isolated browser context and close context, browser, and Playwright resources after each run, including assertion failures.
+- [x] The demo username and password are not duplicated across test methods.
+- [x] Existing browser-launch coverage remains meaningful or is replaced by stronger user-flow assertions.
 
 **Verification:**
-- [ ] Run `mvn test`.
-- [ ] Confirm the test starts Chromium headlessly and cleans up without leaving browser processes owned by the test.
+- [x] Run `mvn test`.
+- [x] Confirm the test starts Chromium headlessly and cleans up without leaving browser processes owned by the test.
 
 **Dependencies:** None  
 **Files likely touched:** `src/test/java/com/almezi/saucedemocom/SmokeTest.java`  
@@ -24,13 +24,13 @@
 **Description:** Exercise the login form with valid demo credentials and verify the application reaches the authenticated inventory screen.
 
 **Acceptance criteria:**
-- [ ] The test enters credentials using accessible labels or stable selectors and submits the login form.
-- [ ] The test verifies the inventory URL/page and visible `Products` heading.
-- [ ] A failed login remains a test failure rather than being hidden by a fallback.
+- [x] The test enters credentials using accessible labels or stable selectors and submits the login form.
+- [x] The test verifies the inventory URL/page and visible `Products` heading.
+- [x] A failed login remains a test failure rather than being hidden by a fallback.
 
 **Verification:**
-- [ ] Run the focused test with `mvn -Dtest=SmokeTest test` (or the renamed test class selector).
-- [ ] Run `mvn test` to check the complete suite.
+- [x] Run the focused test with `mvn -Dtest=SmokeTest test` (or the renamed test class selector).
+- [x] Run `mvn test` to check the complete suite.
 
 **Dependencies:** Task 1  
 **Files likely touched:** `src/test/java/com/almezi/saucedemocom/SmokeTest.java`  
@@ -38,8 +38,8 @@
 
 ## Checkpoint: Login
 
-- [ ] `mvn test` passes.
-- [ ] Login success is asserted by authenticated inventory content, not only by successful browser launch.
+- [x] `mvn test` passes.
+- [x] Login success is asserted by authenticated inventory content, not only by successful browser launch.
 
 ## Phase 2: Checkout Flow
 

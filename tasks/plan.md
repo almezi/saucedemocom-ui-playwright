@@ -40,13 +40,13 @@ Add automated browser coverage for a successful SauceDemo login and a complete c
 
 ### Phase 1: Test Foundation
 
-- [ ] Task 1: Establish isolated Playwright/JUnit test lifecycle and shared login setup.
-- [ ] Task 2: Add a focused successful-login test.
+- [x] Task 1: Establish isolated Playwright/JUnit test lifecycle and shared login setup.
+- [x] Task 2: Add a focused successful-login test.
 
 ### Checkpoint: Login
 
-- [ ] `mvn test` passes with the login test and existing browser smoke coverage.
-- [ ] The test proves successful authentication by checking the inventory page, not just a non-empty page title.
+- [x] `mvn test` passes with the login test and existing browser smoke coverage.
+- [x] The test proves successful authentication by checking the inventory page, not just a non-empty page title.
 
 ### Phase 2: Checkout Flow
 

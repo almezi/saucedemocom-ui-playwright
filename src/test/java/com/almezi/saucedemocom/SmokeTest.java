@@ -1,24 +1,18 @@
 package com.almezi.saucedemocom;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
+import com.almezi.saucedemocom.base.BaseTest;
+import com.almezi.saucedemocom.config.TestConfig;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-class SmokeTest {
+class SmokeTest extends BaseTest {
 
     @Test
+    @DisplayName("Smoke Test: Application home page loads successfully")
     void browserLaunches() {
-        try (Playwright playwright = Playwright.create()) {
-            Browser browser = playwright.chromium().launch(BrowserType.LaunchOptions.builder().setHeadless(true).build());
-            Page page = browser.newPage();
-            page.navigate("https://www.saucedemo.com");
-            assertNotNull(page.title());
-            System.out.println("Title: " + page.title());
-            browser.close();
-        }
+        page.navigate(TestConfig.BASE_URL);
+        assertThat(page).hasTitle("Swag Labs");
     }
 }

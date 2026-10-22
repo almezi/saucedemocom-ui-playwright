@@ -107,13 +107,13 @@ Feature: End-to-End Checkout
 ### Phase 1: Test Foundation & BDD Setup
 
 - [x] Task 1: Establish Playwright test lifecycle, configuration, and initial Page Objects (`LoginPage`, `InventoryPage`).
-- [ ] Task 2: Configure Cucumber BDD dependencies (`cucumber-java`, `cucumber-junit-platform-engine`), `cucumber.properties`, and `CucumberTestRunner`.
-- [ ] Task 3: Create Cucumber lifecycle `Hooks` and map `login.feature` to `LoginSteps` using existing Page Objects.
+- [x] Task 2: Configure Cucumber BDD dependencies (`cucumber-java`, `cucumber-junit-platform-engine`), `cucumber.properties`, and `CucumberTestRunner`.
+- [x] Task 3: Create Cucumber lifecycle `Hooks` and map `login.feature` to `LoginSteps` using existing Page Objects.
 
 ### Checkpoint: Login BDD
 
-- [ ] `mvn test` executes Cucumber runner and passes all scenarios in `login.feature`.
-- [ ] Browser contexts isolate cleanly per scenario with zero resource leaks.
+- [x] `mvn test` executes Cucumber runner and passes all scenarios in `login.feature`.
+- [x] Browser contexts isolate cleanly per scenario with zero resource leaks.
 
 ### Phase 2: Checkout Flow & Complete POM Implementation
 

@@ -23,15 +23,15 @@
 **Description:** Add Cucumber dependencies (`cucumber-java`, `cucumber-junit-platform-engine`) to `pom.xml`, configure `cucumber.properties`, and implement `CucumberTestRunner`.
 
 **Acceptance criteria:**
-- [ ] Maven builds successfully with Cucumber JUnit Platform Engine.
-- [ ] `CucumberTestRunner` configured with standard plugins (pretty, html report).
-- [ ] Cucumber discovers features under `src/test/resources/features/` and glue code under `com.almezi.saucedemocom`.
+- [x] Maven builds successfully with Cucumber JUnit Platform Engine.
+- [x] `CucumberTestRunner` configured with standard plugins (pretty, html report).
+- [x] Cucumber discovers features under `src/test/resources/features/` and glue code under `com.almezi.saucedemocom`.
 
 **Verification:**
-- [ ] Run `mvn test` and verify Cucumber runner triggers feature scanning.
+- [x] Run `mvn test` and verify Cucumber runner triggers feature scanning.
 
 **Dependencies:** Task 1  
-**Files likely touched:** `pom.xml`, `src/test/resources/cucumber.properties`, `src/test/java/com/almezi/saucedemocom/runners/CucumberTestRunner.java`  
+**Files touched:** `pom.xml`, `src/test/resources/cucumber.properties`, `src/test/java/com/almezi/saucedemocom/runners/CucumberTestRunner.java`  
 **Estimated scope:** Small
 
 ---
@@ -40,23 +40,23 @@
 **Description:** Create `Hooks` for scenario-level Playwright setup/teardown and screenshot on failure, write `login.feature`, and implement `LoginSteps` using `LoginPage` and `InventoryPage`.
 
 **Acceptance criteria:**
-- [ ] Cucumber `@Before` / `@After` hooks provide fresh `BrowserContext` and `Page` per scenario.
-- [ ] `login.feature` covers successful login and locked-out user scenarios.
-- [ ] `LoginSteps` executes steps delegating to Page Objects with web-first assertions.
+- [x] Cucumber `@Before` / `@After` hooks provide fresh `BrowserContext` and `Page` per scenario.
+- [x] `login.feature` covers successful login and locked-out user scenarios.
+- [x] `LoginSteps` executes steps delegating to Page Objects with web-first assertions.
 
 **Verification:**
-- [ ] Run `mvn test` and verify both login scenarios pass.
+- [x] Run `mvn test` and verify both login scenarios pass.
 
 **Dependencies:** Task 2  
-**Files likely touched:** `src/test/resources/features/login.feature`, `src/test/java/com/almezi/saucedemocom/hooks/Hooks.java`, `src/test/java/com/almezi/saucedemocom/steps/LoginSteps.java`  
+**Files touched:** `src/test/resources/features/login.feature`, `src/test/java/com/almezi/saucedemocom/hooks/Hooks.java`, `src/test/java/com/almezi/saucedemocom/steps/LoginSteps.java`, `src/test/java/com/almezi/saucedemocom/context/TestContext.java`  
 **Estimated scope:** Medium
 
 ---
 
 ## Checkpoint: Login BDD
 
-- [ ] `mvn test` passes with all scenarios in `login.feature`.
-- [ ] Browser contexts isolate cleanly per scenario with zero resource leaks.
+- [x] `mvn test` passes with all scenarios in `login.feature`.
+- [x] Browser contexts isolate cleanly per scenario with zero resource leaks.
 
 ---
 

@@ -38,13 +38,6 @@ public class InventoryPage {
         return this;
     }
 
-    public InventoryPage removeItemFromCart(String productName) {
-        getItemContainer(productName)
-                .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Remove"))
-                .click();
-        return this;
-    }
-
     public InventoryPage sortBy(String label) {
         productSort.selectOption(new SelectOption().setLabel(label));
         return this;

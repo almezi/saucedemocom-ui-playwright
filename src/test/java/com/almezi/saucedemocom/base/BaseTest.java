@@ -21,7 +21,7 @@ public abstract class BaseTest {
 
     @BeforeAll
     public static void setupBrowser() {
-        playwright = Playwright.create();
+        playwright = TestConfig.createPlaywright();
         browser = playwright.chromium().launch(
                 new BrowserType.LaunchOptions()
                         .setHeadless(TestConfig.HEADLESS)

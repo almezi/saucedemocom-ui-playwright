@@ -27,7 +27,7 @@ public class Hooks {
     @BeforeAll
     public static void beforeAll() {
         if (playwright == null) {
-            playwright = Playwright.create();
+            playwright = TestConfig.createPlaywright();
             browser = playwright.chromium().launch(
                     new BrowserType.LaunchOptions()
                             .setHeadless(TestConfig.HEADLESS)

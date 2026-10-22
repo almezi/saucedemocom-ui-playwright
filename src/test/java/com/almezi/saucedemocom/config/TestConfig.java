@@ -1,9 +1,18 @@
 package com.almezi.saucedemocom.config;
 
+import com.microsoft.playwright.Playwright;
+
+import java.util.Map;
+
 public final class TestConfig {
 
     private TestConfig() {
         // Utility class
+    }
+
+    public static Playwright createPlaywright() {
+        return Playwright.create(new Playwright.CreateOptions()
+                .setEnv(Map.of("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1")));
     }
 
     public static final String BASE_URL = System.getProperty("baseUrl", "https://www.saucedemo.com");

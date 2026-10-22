@@ -8,6 +8,7 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Tracing;
+import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
@@ -38,6 +39,7 @@ public class Hooks {
     public static void beforeAll() {
         if (playwright == null) {
             playwright = TestConfig.createPlaywright();
+            PlaywrightAssertions.setDefaultAssertionTimeout(DEFAULT_TIMEOUT_MS);
             browser = playwright.chromium().launch(
                     new BrowserType.LaunchOptions()
                             .setHeadless(TestConfig.HEADLESS)

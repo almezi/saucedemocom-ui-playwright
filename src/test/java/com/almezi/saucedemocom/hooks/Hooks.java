@@ -61,8 +61,6 @@ public class Hooks {
                 .setSnapshots(true)
                 .setSources(true));
         Page page = context.newPage();
-        page.setDefaultTimeout(DEFAULT_TIMEOUT_MS);
-        page.setDefaultNavigationTimeout(DEFAULT_TIMEOUT_MS);
         testContext.setContext(context);
         testContext.setPage(page);
     }

@@ -1,6 +1,6 @@
 Feature: User Authentication
 
-  @sanity @regression
+  @smoke @sanity @regression
   Scenario: Successful login with standard credentials
     Given the user is on the SauceDemo login page
     When the user logs in with valid standard credentials

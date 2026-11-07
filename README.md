@@ -47,31 +47,53 @@ mvn clean test
 
 ### 2. Run Scenarios by Tag
 ```bash
-# Smoke test suite
+# Smoke test suite (critical path: successful login)
 mvn test -Dcucumber.filter.tags="@smoke"
 
-# Sanity scenarios (default runner tag)
+# Sanity scenarios
 mvn test -Dcucumber.filter.tags="@sanity"
 
-# Regression suite
+# Regression suite (default runner tag)
 mvn test -Dcucumber.filter.tags="@regression"
 ```
 
-### 3. Browser Execution Configuration
+### 3. Run a Specific Feature File
 ```bash
-# Headless mode
+mvn test -Dcucumber.features="src/test/resources/features/login.feature"
+```
+
+### 4. Browser Execution Configuration
+
+By default, tests run in headed mode (`headless=false`) with a `500ms` delay (`slowMo=500`) between actions so you can visually see the browser interactions:
+
+```bash
+# Headless mode (e.g. for CI/CD)
 mvn test -Dheadless=true
 
 # Adjust slow motion delay (ms)
 mvn test -DslowMo=1000
+
+# Fast headed execution without slow motion delay
+mvn test -DslowMo=0
 ```
 
 ---
 
-## 📊 Viewing HTML Reports
+## 🌐 Playwright Browsers Setup
 
-- **Standard Cucumber HTML Report**: `target/cucumber-reports/cucumber.html`
-- **Cucumber JSON Report**: `target/cucumber-reports/cucumber.json`
+Install the browsers once before running the tests:
+
+```bash
+mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install chromium"
+```
+
+---
+
+## 📊 Viewing Reports
+
+- **Cucumber HTML Report**: `target/cucumber-reports/cucumber.html`
+- **Cucumber JSON Report**: `target/cucumber-reports/cucumber.json` (for CI/CD integration)
+- **Maven Surefire Reports**: `target/surefire-reports/` (JUnit XML summaries for pipelines)
 
 **macOS:**
 ```bash

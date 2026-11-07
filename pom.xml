@@ -42,13 +42,11 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-suite</artifactId>
-      <version>${junit.platform.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -102,7 +100,6 @@
             <include>**/*Runner.java</include>
           </includes>
           <forkedProcessTimeoutInSeconds>900</forkedProcessTimeoutInSeconds>
-          <rerunFailingTestsCount>1</rerunFailingTestsCount>
         </configuration>
       </plugin>
       <plugin>

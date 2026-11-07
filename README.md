@@ -60,12 +60,12 @@ Playwright browser downloads are skipped during test execution. Run the install 
 │       │               ├── runners/        # JUnit Platform suite runner
 │       │               └── steps/          # Step definitions
 │       └── resources
-│           ├── junit-platform.properties
+│           ├── junit-platform.properties  # Cucumber glue and plugin configuration
 │           └── features/
-│               ├── login.feature
-│               ├── inventory.feature
 │               ├── cart.feature
 │               ├── checkout.feature
+│               ├── inventory.feature
+│               ├── login.feature
 │               └── menu.feature
 ```
 
@@ -146,4 +146,4 @@ start target/cucumber-reports/cucumber.html
 
 ## Continuous Integration
 
-The GitHub Actions workflow runs the suite on every push and pull request. It installs Chromium, runs the regression suite headlessly, and uploads the Cucumber and Surefire reports plus Playwright traces.
+The GitHub Actions workflow runs the suite on every push and pull request. It installs Chromium, runs the full suite headlessly, and uploads the Cucumber and Surefire reports plus Playwright traces.

@@ -67,7 +67,7 @@ public class CartPage {
         return cartBadge;
     }
 
-    public Locator getItemContainer(String itemName) {
+    private Locator getItemContainer(String itemName) {
         return cartItems.filter(new Locator.FilterOptions().setHas(
                 page.getByText(itemName, new Page.GetByTextOptions().setExact(true))));
     }

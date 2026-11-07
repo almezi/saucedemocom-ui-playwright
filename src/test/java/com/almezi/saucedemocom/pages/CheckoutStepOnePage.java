@@ -53,6 +53,11 @@ public class CheckoutStepOnePage {
         return new CheckoutStepTwoPage(page);
     }
 
+    public CartPage clickCancel() {
+        cancelButton.click();
+        return new CartPage(page);
+    }
+
     public Locator getTitle() {
         return title;
     }

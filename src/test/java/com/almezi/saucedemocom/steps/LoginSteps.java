@@ -58,4 +58,9 @@ public class LoginSteps {
         assertThat(loginPage.getErrorMessage()).isVisible();
         assertThat(loginPage.getErrorMessage()).containsText(expectedErrorMessage);
     }
+
+    @Then("the user should be on the SauceDemo login page")
+    public void userShouldBeOnSauceDemoLoginPage() {
+        assertThat(testContext.getLoginPage().getLoginButton()).isVisible();
+    }
 }

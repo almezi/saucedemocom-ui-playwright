@@ -30,7 +30,8 @@ public class CheckoutStepTwoPage {
     }
 
     public Locator getItemByName(String itemName) {
-        return summaryItems.filter(new Locator.FilterOptions().setHas(page.getByText(itemName)));
+        return summaryItems.filter(new Locator.FilterOptions().setHas(
+                page.getByText(itemName, new Page.GetByTextOptions().setExact(true))));
     }
 
     public Locator getItemQuantity(String itemName) {
@@ -40,6 +41,11 @@ public class CheckoutStepTwoPage {
     public CheckoutCompletePage clickFinish() {
         finishButton.click();
         return new CheckoutCompletePage(page);
+    }
+
+    public InventoryPage clickCancel() {
+        cancelButton.click();
+        return new InventoryPage(page);
     }
 
     public Locator getTitle() {

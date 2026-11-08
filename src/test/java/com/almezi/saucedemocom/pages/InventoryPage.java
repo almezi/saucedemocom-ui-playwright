@@ -74,10 +74,6 @@ public class InventoryPage {
         return cartBadge;
     }
 
-    public Locator getCartLink() {
-        return cartLink;
-    }
-
     public Locator getFirstItemName() {
         return itemNames.first();
     }
@@ -86,9 +82,5 @@ public class InventoryPage {
         return page.locator("[data-test='inventory-item']")
                 .filter(new Locator.FilterOptions().setHas(
                         page.getByText(productName, new Page.GetByTextOptions().setExact(true))));
-    }
-
-    public Page getPage() {
-        return page;
     }
 }

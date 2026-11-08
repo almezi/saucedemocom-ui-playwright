@@ -20,7 +20,6 @@ public final class TestConfig {
     public static final String CART_URL = BASE_URL + "/cart.html";
     public static final String STANDARD_USER = System.getProperty("standardUser", "standard_user");
     public static final String STANDARD_PASSWORD = System.getProperty("standardPassword", "secret_sauce");
-    public static final String LOCKED_OUT_USER = System.getProperty("lockedOutUser", "locked_out_user");
 
     public static final boolean HEADLESS = Boolean.parseBoolean(System.getProperty("headless", "true"));
     public static final double SLOW_MO = Double.parseDouble(System.getProperty("slowMo", "0"));

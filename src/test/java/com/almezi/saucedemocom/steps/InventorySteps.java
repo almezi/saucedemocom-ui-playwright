@@ -15,7 +15,7 @@ public class InventorySteps {
         this.testContext = testContext;
     }
 
-    @When("the user adds {string} to the shopping cart")
+    @When("the user adds {product} to the shopping cart")
     public void userAddsItemToShoppingCart(String productName) {
         testContext.getInventoryPage().addItemToCart(productName);
     }
@@ -25,7 +25,7 @@ public class InventorySteps {
         testContext.getInventoryPage().clickCartLink();
     }
 
-    @When("the user sorts products by {string}")
+    @When("the user sorts products by {sort}")
     public void userSortsProductsBy(String sortLabel) {
         testContext.getInventoryPage().sortBy(sortLabel);
     }
@@ -40,7 +40,7 @@ public class InventorySteps {
         testContext.getInventoryPage().resetAppState();
     }
 
-    @Then("the first product should be {string}")
+    @Then("the first product should be {product}")
     public void firstProductShouldBe(String productName) {
         assertThat(testContext.getInventoryPage().getFirstItemName()).hasText(productName);
     }

@@ -7,19 +7,15 @@ import com.microsoft.playwright.options.AriaRole;
 public class CartPage {
 
     private final Page page;
-    private final Locator title;
     private final Locator checkoutButton;
     private final Locator continueShoppingButton;
     private final Locator cartItems;
-    private final Locator cartBadge;
 
     public CartPage(Page page) {
         this.page = page;
-        this.title = page.locator("[data-test='title']");
         this.checkoutButton = page.locator("[data-test='checkout']");
         this.continueShoppingButton = page.locator("[data-test='continue-shopping']");
         this.cartItems = page.locator("[data-test='inventory-item']");
-        this.cartBadge = page.locator("[data-test='shopping-cart-badge']");
     }
 
     public Locator getItemByName(String itemName) {
@@ -48,27 +44,7 @@ public class CartPage {
         return new CheckoutStepOnePage(page);
     }
 
-    public Locator getTitle() {
-        return title;
-    }
-
-    public Locator getCheckoutButton() {
-        return checkoutButton;
-    }
-
-    public Locator getContinueShoppingButton() {
-        return continueShoppingButton;
-    }
-
     public Locator getCartItems() {
         return cartItems;
-    }
-
-    public Locator getCartBadge() {
-        return cartBadge;
-    }
-
-    public Page getPage() {
-        return page;
     }
 }

@@ -112,7 +112,14 @@ mvn test -Dheadless=false -DslowMo=250
 mvn test -DbaseUrl="https://www.saucedemo.com"
 ```
 
-Credentials can be overridden with `-DstandardUser`, `-DstandardPassword`, and `-DlockedOutUser`.
+Credentials can be overridden with `-DstandardUser` and `-DstandardPassword`.
+
+### Test data
+
+Product names, sort dropdown labels, and the checkout customer are maintained in
+`src/test/resources/test-data.properties` — one place to update when the site's wording changes.
+Feature files reference short keys (e.g. `onesie`, `nameDesc`), resolved by the `{product}` and
+`{sort}` parameter types in `config/ParameterTypes.java`. An unknown key fails the run with its name.
 
 ---
 

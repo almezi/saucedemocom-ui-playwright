@@ -55,14 +55,6 @@ public class LoginPage {
         return errorMessage;
     }
 
-    public Locator getUsernameInput() {
-        return usernameInput;
-    }
-
-    public Locator getPasswordInput() {
-        return passwordInput;
-    }
-
     public Locator getLoginButton() {
         return loginButton;
     }

@@ -86,6 +86,7 @@ public class CheckoutSteps {
     }
 
     private double amount(Locator label) {
+        assertThat(label).containsText("$");
         String text = label.textContent();
         Matcher matcher = MONEY.matcher(text);
         if (!matcher.find()) {

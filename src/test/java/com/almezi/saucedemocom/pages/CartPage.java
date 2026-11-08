@@ -23,7 +23,8 @@ public class CartPage {
     }
 
     public Locator getItemByName(String itemName) {
-        return getItemContainer(itemName);
+        return cartItems.filter(new Locator.FilterOptions().setHas(
+                page.getByText(itemName, new Page.GetByTextOptions().setExact(true))));
     }
 
     public Locator getItemQuantity(String itemName) {
@@ -31,7 +32,7 @@ public class CartPage {
     }
 
     public CartPage removeItem(String itemName) {
-        getItemContainer(itemName)
+        getItemByName(itemName)
                 .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Remove"))
                 .click();
         return this;
@@ -65,11 +66,6 @@ public class CartPage {
 
     public Locator getCartBadge() {
         return cartBadge;
-    }
-
-    private Locator getItemContainer(String itemName) {
-        return cartItems.filter(new Locator.FilterOptions().setHas(
-                page.getByText(itemName, new Page.GetByTextOptions().setExact(true))));
     }
 
     public Page getPage() {

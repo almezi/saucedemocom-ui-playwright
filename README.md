@@ -16,7 +16,7 @@ An automated UI test suite for [SauceDemo](https://www.saucedemo.com) using **Mi
 
 ## Prerequisites
 
-- Java 21 or newer
+- Java 21–25
 - Maven 3.9 or newer
 - Network access to `https://www.saucedemo.com`
 

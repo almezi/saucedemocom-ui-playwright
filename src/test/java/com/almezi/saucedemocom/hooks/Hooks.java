@@ -23,7 +23,7 @@ import java.util.Locale;
 
 public class Hooks {
 
-    private static final double DEFAULT_TIMEOUT_MS = 30_000;
+    private static final double DEFAULT_TIMEOUT_MS = 10_000;
     private static final Path TRACE_DIRECTORY = Paths.get("target", "playwright-traces");
 
     private static Playwright playwright;

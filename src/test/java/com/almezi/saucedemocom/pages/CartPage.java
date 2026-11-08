@@ -7,23 +7,20 @@ import com.microsoft.playwright.options.AriaRole;
 public class CartPage {
 
     private final Page page;
-    private final Locator title;
     private final Locator checkoutButton;
     private final Locator continueShoppingButton;
     private final Locator cartItems;
-    private final Locator cartBadge;
 
     public CartPage(Page page) {
         this.page = page;
-        this.title = page.locator("[data-test='title']");
         this.checkoutButton = page.locator("[data-test='checkout']");
         this.continueShoppingButton = page.locator("[data-test='continue-shopping']");
         this.cartItems = page.locator("[data-test='inventory-item']");
-        this.cartBadge = page.locator("[data-test='shopping-cart-badge']");
     }
 
     public Locator getItemByName(String itemName) {
-        return getItemContainer(itemName);
+        return cartItems.filter(new Locator.FilterOptions().setHas(
+                page.getByText(itemName, new Page.GetByTextOptions().setExact(true))));
     }
 
     public Locator getItemQuantity(String itemName) {
@@ -31,7 +28,7 @@ public class CartPage {
     }
 
     public CartPage removeItem(String itemName) {
-        getItemContainer(itemName)
+        getItemByName(itemName)
                 .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Remove"))
                 .click();
         return this;
@@ -47,32 +44,7 @@ public class CartPage {
         return new CheckoutStepOnePage(page);
     }
 
-    public Locator getTitle() {
-        return title;
-    }
-
-    public Locator getCheckoutButton() {
-        return checkoutButton;
-    }
-
-    public Locator getContinueShoppingButton() {
-        return continueShoppingButton;
-    }
-
     public Locator getCartItems() {
         return cartItems;
-    }
-
-    public Locator getCartBadge() {
-        return cartBadge;
-    }
-
-    private Locator getItemContainer(String itemName) {
-        return cartItems.filter(new Locator.FilterOptions().setHas(
-                page.getByText(itemName, new Page.GetByTextOptions().setExact(true))));
-    }
-
-    public Page getPage() {
-        return page;
     }
 }

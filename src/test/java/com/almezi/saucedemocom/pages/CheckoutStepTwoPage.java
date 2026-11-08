@@ -6,24 +6,18 @@ import com.microsoft.playwright.Page;
 public class CheckoutStepTwoPage {
 
     private final Page page;
-    private final Locator title;
     private final Locator summaryItems;
     private final Locator finishButton;
     private final Locator cancelButton;
-    private final Locator paymentInfoLabel;
-    private final Locator shippingInfoLabel;
     private final Locator subtotalLabel;
     private final Locator taxLabel;
     private final Locator totalLabel;
 
     public CheckoutStepTwoPage(Page page) {
         this.page = page;
-        this.title = page.locator("[data-test='title']");
         this.summaryItems = page.locator("[data-test='inventory-item']");
         this.finishButton = page.locator("[data-test='finish']");
         this.cancelButton = page.locator("[data-test='cancel']");
-        this.paymentInfoLabel = page.locator("[data-test='payment-info-value']");
-        this.shippingInfoLabel = page.locator("[data-test='shipping-info-value']");
         this.subtotalLabel = page.locator("[data-test='subtotal-label']");
         this.taxLabel = page.locator("[data-test='tax-label']");
         this.totalLabel = page.locator("[data-test='total-label']");
@@ -48,30 +42,6 @@ public class CheckoutStepTwoPage {
         return new InventoryPage(page);
     }
 
-    public Locator getTitle() {
-        return title;
-    }
-
-    public Locator getSummaryItems() {
-        return summaryItems;
-    }
-
-    public Locator getFinishButton() {
-        return finishButton;
-    }
-
-    public Locator getCancelButton() {
-        return cancelButton;
-    }
-
-    public Locator getPaymentInfoLabel() {
-        return paymentInfoLabel;
-    }
-
-    public Locator getShippingInfoLabel() {
-        return shippingInfoLabel;
-    }
-
     public Locator getSubtotalLabel() {
         return subtotalLabel;
     }
@@ -82,9 +52,5 @@ public class CheckoutStepTwoPage {
 
     public Locator getTotalLabel() {
         return totalLabel;
-    }
-
-    public Page getPage() {
-        return page;
     }
 }

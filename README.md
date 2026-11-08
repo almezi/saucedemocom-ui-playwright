@@ -1,13 +1,13 @@
 # SauceDemo UI Automation with Playwright & Cucumber
 
-An automated UI test suite for [SauceDemo](https://www.saucedemo.com) using **Microsoft Playwright for Java**, **Cucumber (BDD)**, **JUnit 5 Platform Suite**, and HTML reporting.
+An automated UI test suite for [SauceDemo](https://www.saucedemo.com) using **Microsoft Playwright for Java**, **Cucumber (BDD)**, **JUnit 6 Platform Suite**, and HTML reporting.
 
 ---
 
 ## Tech Stack
 
 - **Browser engine:** Microsoft Playwright (Chromium)
-- **BDD framework:** Cucumber Java 7 and Gherkin feature files
+- **BDD framework:** Cucumber Java 8 and Gherkin feature files
 - **Test runner:** JUnit Platform Suite (`@Suite`)
 - **Assertions:** Playwright web-first assertions
 - **Reporting:** Cucumber HTML and JSON reports
@@ -16,7 +16,7 @@ An automated UI test suite for [SauceDemo](https://www.saucedemo.com) using **Mi
 
 ## Prerequisites
 
-- Java 21 or newer
+- Java 21–25
 - Maven 3.9 or newer
 - Network access to `https://www.saucedemo.com`
 
@@ -112,7 +112,14 @@ mvn test -Dheadless=false -DslowMo=250
 mvn test -DbaseUrl="https://www.saucedemo.com"
 ```
 
-Credentials can be overridden with `-DstandardUser`, `-DstandardPassword`, and `-DlockedOutUser`.
+Credentials can be overridden with `-DstandardUser` and `-DstandardPassword`.
+
+### Test data
+
+Product names, sort dropdown labels, and the checkout customer are maintained in
+`src/test/resources/test-data.properties` — one place to update when the site's wording changes.
+Feature files reference short keys (e.g. `onesie`, `nameDesc`), resolved by the `{product}` and
+`{sort}` parameter types in `config/ParameterTypes.java`. An unknown key fails the run with its name.
 
 ---
 

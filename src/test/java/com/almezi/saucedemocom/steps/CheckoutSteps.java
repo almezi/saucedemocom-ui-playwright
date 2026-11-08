@@ -1,8 +1,8 @@
 package com.almezi.saucedemocom.steps;
 
+import com.almezi.saucedemocom.config.TestData;
 import com.almezi.saucedemocom.context.TestContext;
 import com.almezi.saucedemocom.pages.CheckoutCompletePage;
-import com.almezi.saucedemocom.pages.CheckoutStepOnePage;
 import com.almezi.saucedemocom.pages.CheckoutStepTwoPage;
 import com.microsoft.playwright.Locator;
 import io.cucumber.java.en.Then;
@@ -24,10 +24,21 @@ public class CheckoutSteps {
         this.testContext = testContext;
     }
 
-    @When("fills in customer information with first name {string}, last name {string}, and postal code {string}")
-    public void fillsInCustomerInformation(String firstName, String lastName, String postalCode) {
-        CheckoutStepOnePage stepOnePage = testContext.getCheckoutStepOnePage();
-        stepOnePage.fillCustomerInformation(firstName, lastName, postalCode);
+    @When("fills in customer information")
+    public void fillsInCustomerInformation() {
+        fillCustomer(TestData.get("customer.postalCode"));
+    }
+
+    @When("fills in customer information without a postal code")
+    public void fillsInCustomerInformationWithoutPostalCode() {
+        fillCustomer("");
+    }
+
+    private void fillCustomer(String postalCode) {
+        testContext.getCheckoutStepOnePage().fillCustomerInformation(
+                TestData.get("customer.firstName"),
+                TestData.get("customer.lastName"),
+                postalCode);
     }
 
     @When("continues to the checkout overview")
@@ -45,7 +56,7 @@ public class CheckoutSteps {
         testContext.getCheckoutStepTwoPage().clickCancel();
     }
 
-    @Then("the order summary should show {string} with quantity {int}")
+    @Then("the order summary should show {product} with quantity {int}")
     public void orderSummaryShouldShowItemWithQuantity(String itemName, int quantity) {
         CheckoutStepTwoPage stepTwoPage = testContext.getCheckoutStepTwoPage();
         assertThat(stepTwoPage.getItemByName(itemName)).isVisible();
@@ -86,6 +97,7 @@ public class CheckoutSteps {
     }
 
     private double amount(Locator label) {
+        assertThat(label).containsText("$");
         String text = label.textContent();
         Matcher matcher = MONEY.matcher(text);
         if (!matcher.find()) {

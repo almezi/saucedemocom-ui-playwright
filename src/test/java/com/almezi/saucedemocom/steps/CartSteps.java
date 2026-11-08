@@ -16,7 +16,7 @@ public class CartSteps {
         this.testContext = testContext;
     }
 
-    @Then("the cart should contain {int} item of {string}")
+    @Then("the cart should contain {int} item of {product}")
     public void cartShouldContainItem(int quantity, String itemName) {
         CartPage cartPage = testContext.getCartPage();
         assertThat(cartPage.getItemByName(itemName)).isVisible();
@@ -38,7 +38,7 @@ public class CartSteps {
         testContext.getCartPage().clickCheckout();
     }
 
-    @When("the user removes {string} from the shopping cart")
+    @When("the user removes {product} from the shopping cart")
     public void userRemovesItemFromShoppingCart(String itemName) {
         testContext.getCartPage().removeItem(itemName);
     }
